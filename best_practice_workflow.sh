@@ -20,7 +20,7 @@ adapterFile="${cwd}/TestData/NGS/adapter.fa"
 bbduk="bbmap.sh"                                            	#BBMap version 36.14 Best install via 'conda install bbmap'
 fastqc="fastqc"                                           		#v0.11.4
 samtools="samtools"                                       		#1.3 (using htslib 1.3)
-tRNAscanSE="tRNAscan-SE"                                  		#1.3.1 (January 2012)
+tRNAscanSE="tRNAscan-SE"                                  		#tRNAscan-SE 2.0 (December 2017)
 bedtools="bedtools"                                       		#v2.25.0
 segemehl="segemehl.x"                                     		#0.2.0-418
 picardJar="picard.jar"  				 		#2.2.1
@@ -68,10 +68,10 @@ $tRNAscanSE -b -q -o ${tRNAName}.nuc.csv  ${genomeName}.fa
 
 ## scan for mitochondrial tRNA, consider: tRNAscanSE finds only 21 mt tRNA
 cat ${genomeName}.fa | perl -lane 'BEGIN{$c=0;}if(m/^>chrM$/){$c=1}elsif(m/^>/){$c=0;}print if $c' > ${genomeName}.chrM.fa
-$tRNAscanSE -b -q -O -o ${tRNAName}.chrM.csv ${genomeName}.chrM.fa
+$tRNAscanSE -M mammal -q -O -o ${tRNAName}.chrM.csv ${genomeName}.chrM.fa
 
-grep -v chrM ${tRNAName}.nuc.csv > ${tRNAName}.nuc_mod.csv
-cat ${tRNAName}.nuc_mod.csv ${tRNAName}.chrM.csv > ${tRNAName}.csv
+grep -v chrM ${tRNAName}.nuc.csv | tail -n +4 > ${tRNAName}.nuc_mod.csv
+cat ${tRNAName}.nuc_mod.csv <(tail -n +4 ${tRNAName}.chrM.csv) > ${tRNAName}.csv
 
 ##convert tRNAscan tab file into bed12 entry
 perl ${scriptDir}/tRNAscan2bed12.pl ${tRNAName}.csv ${tRNAName}.bed12
