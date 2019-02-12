@@ -5,6 +5,8 @@ use strict;
 my $in = shift;         
 my $out = shift;        
 
+use List::Util qw[min max];
+
 open IN, "< $in" or die "can t open $in\n";
 open OUT, "> $out" or die "can t open $out\n";
 
@@ -18,7 +20,7 @@ while(<IN>) {
 		if($line[9] eq 2){
 			my @SP = split(/,/,$line[10]);
 			my $block = (($line[2] - $line[1]) - $SP[1]) +50;
-			print OUT join("\t",$line[0],$line[1]-50,$line[2]+50,$line[3],$line[4],$line[5],$line[1]-50,$line[2]+50,$line[8],$line[9]);
+			print OUT join("\t",$line[0],max(0,$line[1]-50),$line[2]+50,$line[3],$line[4],$line[5],max(0,$line[1]-50),$line[2]+50,$line[8],$line[9]);
 			print OUT "\t";
 			print OUT join (",",$SP[0]+50,$SP[1]+50);			
 			print OUT "\t";
@@ -26,7 +28,7 @@ while(<IN>) {
 			print OUT "\n";
 		}
 		else{
-			print OUT join("\t",$line[0],$line[1]-50,$line[2]+50,$line[3],$line[4],$line[5],$line[1]-50,$line[2]+50,$line[8],$line[9],$line[10]+100,$line[11]);
+			print OUT join("\t",$line[0],max(0,$line[1]-50),$line[2]+50,$line[3],$line[4],$line[5],max(0,$line[1]-50),$line[2]+50,$line[8],$line[9],$line[10]+100,$line[11]);
 			print OUT "\n";
 		}
 	}
